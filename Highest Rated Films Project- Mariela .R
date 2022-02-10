@@ -3,7 +3,7 @@ library("readxl")
 
 #Importing data frame from excel into R 
 #using file path from my computer
-Data<- read_excel("/Users/marielaponce/Downloads/Movies_gross_rating.xlsx")
+Data<- read_excel("Movies_gross_rating.xlsx")
 Data
 
 #Extract and label each column to create data frame
