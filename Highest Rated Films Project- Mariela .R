@@ -3,20 +3,29 @@ library("readxl")
 
 #Importing data frame from excel into R 
 #using file path from my computer
-Data<- read_excel("Movies_gross_rating.xlsx")
+Data<- read_excel("Movies_gross_rating.xlsx", col_names = TRUE)
 Data
+str(Data)
+#510 obs. of 10 variables
+#Obtain tables for chr variables (except "Title")
+table(Data$`MPAA Rating`)
+# G    PG PG-13     R 
+#26   127   228   129 
+table(Data$Genre)
+#         Action       Adventure       Animation 
+#             77              26              63 
+#         Comedy           Crime           Drama 
+#             94              16              57 
+#         Family         Fantasy         History 
+#             28              22               4 
+#         Horror         Mystery         Romance 
+#              9              10              26 
+#Science Fiction         Thriller            War 
+#             31              34               8 
+#        Western 
+#              5
 
-#Extract and label each column to create data frame
-Title<- Data[,2]
-MPARating<- Data[,3]
-Budget<- Data[,4]
-Gross<- Data[,5]
-ReleaseDate<- Data[,6]
-Genre<- Data[,7]
-Runtime<- Data[,8]
-Rating<- Data[,9]
-RatingCount<- Data[,10]
-HighestRatedFilms<- data.frame(Title, MPARating, Budget, Gross, ReleaseDate, Genre, Runtime, Rating, RatingCount)
+HighestRatedFilms<- data.frame(Data[, -1])
 HighestRatedFilms
 
 #Analyze structure to determine if there are NA's
