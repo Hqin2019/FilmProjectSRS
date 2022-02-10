@@ -50,8 +50,8 @@ sum(is.na(TopFilms_Norm[ ,4]))
 sum(is.na(TopFilms_Norm[ ,5]))
 
 #Original Data Frame with Normalized Columns
-TopFilms<- data.frame(Films_omit[, -c(3, 4, 7, 8, 9)], TopFilms_Norm)
-head(TopFilms)
+#TopFilms<- data.frame(Films_omit[, -c(3, 4, 7, 8, 9)], TopFilms_Norm)
+#head(TopFilms)
 
 summary(TopFilms_Norm)
 
