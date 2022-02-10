@@ -29,6 +29,11 @@ HighestRatedFilms<- data.frame(Data[, -1])
 HighestRatedFilms
 
 #Analyze structure to determine if there are NA's
+sum(is.na(HighestRatedFilms))
+#[1] 4
+Films_omit<- na.omit(HighestRatedFilms)
+sum(is.na(Films_omit))
+#[1] 0
 help("sum")
 str(HighestRatedFilms)
 min(HighestRatedFilms$Rating)
