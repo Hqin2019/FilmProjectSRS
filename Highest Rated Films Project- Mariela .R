@@ -35,7 +35,7 @@ Films_omit<- na.omit(HighestRatedFilms)
 sum(is.na(Films_omit))
 #[1] 0
 
-#Normalize Data so that data points range from [0,1]
+#Keep the numerical variables only and Normalize Data so that data points range from [0,1]
 normalize <- function(x) {
   return ((x - min(x, na.rm=T)) / (max(x, na.rm = T) - min(x, na.rm=T)))
 }
