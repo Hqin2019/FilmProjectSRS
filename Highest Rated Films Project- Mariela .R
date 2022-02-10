@@ -40,16 +40,18 @@ normalize <- function(x) {
   return ((x - min(x, na.rm=T)) / (max(x, na.rm = T) - min(x, na.rm=T)))
 }
 film_norm<- apply(Films_omit[ ,c(3, 4, 7, 8, 9)], 2, normalize)
-film_norm
+head(film_norm)
 #Data frame with normalized columns only
 TopFilms_Norm<-data.frame(film_norm)
-TopFilms_Norm
+names(TopFilms_Norm)
+#[1] "Budget"       "Gross"        "Runtime"     
+#[4] "Rating"       "Rating.Count"
 sum(is.na(TopFilms_Norm[ ,4]))
 sum(is.na(TopFilms_Norm[ ,5]))
 
 #Original Data Frame with Normalized Columns
 TopFilms<- data.frame(Films_omit[, -c(3, 4, 7, 8, 9)], TopFilms_Norm)
-TopFilms
+head(TopFilms)
 
 summary(TopFilms_Norm)
 
