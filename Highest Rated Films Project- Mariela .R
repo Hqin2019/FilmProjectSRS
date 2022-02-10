@@ -28,29 +28,12 @@ table(Data$Genre)
 HighestRatedFilms<- data.frame(Data[, -1])
 HighestRatedFilms
 
-#Analyze structure to determine if there are NA's
+#Determine if there are NA's and remove NA's.
 sum(is.na(HighestRatedFilms))
 #[1] 4
 Films_omit<- na.omit(HighestRatedFilms)
 sum(is.na(Films_omit))
 #[1] 0
-help("sum")
-str(HighestRatedFilms)
-min(HighestRatedFilms$Rating)
-summary(HighestRatedFilms$Rating)
-names(HighestRatedFilms)
-min(HighestRatedFilms[, 8])
-sum(is.na(HighestRatedFilms[ ,8]))
-sum(is.na(HighestRatedFilms[ ,9]))
-min(HighestRatedFilms[, 8])
-min(Film_rm[, 8])
-
-#HighestRatedFilms Data without NA's
-Films_omit<- na.omit(HighestRatedFilms)
-Films_omit
-sum(is.na(Films_omit[ ,8]))
-sum(is.na(Films_omit[ ,9]))
-dim(Films_omit)
 
 #Normalize Data so that data points range from [0,1]
 normalize <- function(x) {
