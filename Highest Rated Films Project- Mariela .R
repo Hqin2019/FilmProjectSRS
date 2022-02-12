@@ -124,6 +124,9 @@ dev.off()
 bptest(rating.model) #p-value 0.006052 becomes smaller, fail the test.
 shapiro.test(resid(rating.model)) #normality- show plots for improvement, improved p-value: 0.002749, still small though
 gvlma(rating.model)
+#possibly need a transformation.
+
+
 #check multicollinearity (Variation Inflation Factors)
 library("car")
 all_vifs<- vif(rating.model)
