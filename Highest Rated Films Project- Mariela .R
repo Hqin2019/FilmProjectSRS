@@ -132,8 +132,8 @@ library("car")
 all_vifs<- vif(rating.model)
 print(all_vifs) #no vifs exceed 10
 
-firsttvifs<- vif(fit.model)
-print(firsttvifs)
+#firsttvifs<- vif(fit.model)
+#print(firsttvifs)
 
 #check interactions
 add1.test<- add1(rating.model, scope = .~. + .^2, test = "F")
