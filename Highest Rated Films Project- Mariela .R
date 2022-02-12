@@ -98,11 +98,12 @@ plot(Rating~Rating.Count, data=TopFilms_Norm) #roughly linear
 #remove outliers to improve model, regression is sensitive 
 
 #CHECK ASSUMPTIONS
+#check constant variance
 bptest(fit.model) #ok p-value, we want bigger than .05, but this one is ok
 #check normality
-shapiro.test(resid(fit.model))   #normality fails
-gvlma(fit.model)
-#check constant variance
+shapiro.test(resid(fit.model))   #normality fails. too small p-value.
+gvlma(fit.model) #all fail
+
 
 
 
