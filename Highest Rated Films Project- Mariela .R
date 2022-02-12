@@ -1,5 +1,10 @@
 install.packages("readxl")
+install.packages("gvlma")
+install.packages("lmtest")
+
 library("readxl")
+library("gvlma")
+library("lmtest")
 
 #Importing data frame from excel into R 
 #using file path from my computer
@@ -92,16 +97,13 @@ plot(Rating~Rating.Count, data=TopFilms_Norm) #roughly linear
 #constant variance and normality are most important assumptions (bptest, plots for normality)
 #remove outliers to improve model, regression is sensitive 
 
-#CHECK ALL ASSUMPTIONS
-install.packages("gvlma")
-library("gvlma")
-gvlma(fit.model)
-#check constant variance
-install.packages("lmtest")
-library("lmtest")
+#CHECK ASSUMPTIONS
 bptest(fit.model) #ok p-value, we want bigger than .05, but this one is ok
 #check normality
 shapiro.test(resid(fit.model))   #normality fails
+gvlma(fit.model)
+#check constant variance
+
 
 
 #Show all big outliers
