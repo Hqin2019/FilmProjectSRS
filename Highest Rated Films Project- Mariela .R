@@ -117,12 +117,13 @@ summary(rating.model)
 extractAIC(rating.model)
 #[1]     5.000 -2108.358
 #a better AIC
-
-
+par(mfrow=c(2,2))
 plot(rating.model)
+dev.off()
+
 gvlma(rating.model)
-bptest(rating.model)   
-shapiro.test(resid(rating.model)) #normality- show plots for improvement
+bptest(rating.model) #p-value 0.006052 becomes smaller, fail the test.
+shapiro.test(resid(rating.model)) #normality- show plots for improvement, improved p-value: 0.002749, still small though
 #check multicollinearity (Variation Inflation Factors)
 library("car")
 all_vifs<- vif(rating.model)
