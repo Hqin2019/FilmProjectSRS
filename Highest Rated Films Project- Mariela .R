@@ -64,7 +64,12 @@ summary(TopFilms_Norm)
 fit.model<- lm(Rating ~., data=TopFilms_Norm)
 fit.model
 summary(fit.model)
+#plot the diagnostic plots
+par(mar=c(1,1,1,1))
+#the above line can solves the issue of "figure margins too large"
+par(mfrow=c(2,2))
 plot(fit.model)
+dev.off()
 
 #Assumptions
 #1. Independence of observations
