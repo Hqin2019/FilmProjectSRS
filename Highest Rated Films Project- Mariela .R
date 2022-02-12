@@ -75,6 +75,8 @@ par(mar=c(1,1,1,1))
 par(mfrow=c(2,2))
 plot(fit.model)
 dev.off()
+extractAIC(fit.model)
+#[1]     5.000 -2079.708
 
 #Assumptions
 #1. Independence of observations
@@ -104,16 +106,19 @@ bptest(fit.model) #ok p-value, we want bigger than .05, but this one is ok
 shapiro.test(resid(fit.model))   #normality fails. too small p-value.
 gvlma(fit.model) #all fail
 
-
-
-
-#Show all big outliers
+#Detect high influence points by Cook's distance.
 TopFilms_Norm[cooks.distance(fit.model)> (4 / length(cooks.distance(fit.model))), ]
 #new data
-cleandata<- TopFilms_Norm[-c(55, 100,112, 207, 217, 228, 251, 257, 279, 288, 379, 394, 402, 403, 404, 411, 414, 420, 427, 428, 434, 435, 436, 439, 443),]
+cleandata<- TopFilms_Norm[-c(55, 100, 112, 207, 217, 228, 251, 257, 279, 288, 379, 394, 402, 403, 404, 411, 414, 420, 427, 428, 434, 435, 436, 439, 443),]
+#483 obs of 5 variables.
 CleanData.norm<- data.frame(cleandata)
 rating.model<- lm(Rating ~., data=CleanData.norm)
 summary(rating.model)
+extractAIC(rating.model)
+#[1]     5.000 -2108.358
+#a better AIC
+
+
 plot(rating.model)
 gvlma(rating.model)
 bptest(rating.model)   
