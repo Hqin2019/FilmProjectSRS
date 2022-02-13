@@ -124,7 +124,6 @@ dev.off()
 bptest(rating.model) #p-value 0.006052 becomes smaller, fail the test.
 shapiro.test(resid(rating.model)) #normality- show plots for improvement, improved p-value: 0.002749, still small though
 gvlma(rating.model)
-#possibly need a transformation.
 
 
 #check multicollinearity (Variation Inflation Factors)
@@ -164,6 +163,7 @@ shapiro.test(resid(newmodel3)) #p-value 0.01633, fail the test.
 gvlma(newmodel3)# no improvement.
 #try to explain how to interpret interactions, Runtime*RatingCount interact with rating
 
+#Transformation
 
 #Remove Outliers
 Q1rating<- quantile(TopFilms_Norm$Rating, .25)
