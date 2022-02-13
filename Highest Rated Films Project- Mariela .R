@@ -164,6 +164,9 @@ gvlma(newmodel3)# no improvement.
 #try to explain how to interpret interactions, Runtime*RatingCount interact with rating
 
 #Transformation
+library(MASS)
+#cannot be normalized. 
+boxcox(rating.model, CleanData.norm, plotit=TRUE)
 
 #Remove Outliers
 Q1rating<- quantile(TopFilms_Norm$Rating, .25)
