@@ -130,7 +130,7 @@ gvlma(rating.model)
 #check multicollinearity (Variation Inflation Factors)
 library("car")
 all_vifs<- vif(rating.model)
-print(all_vifs) #no vifs exceed 10
+print(all_vifs) #maximum VIF is Gross 2.152045
 
 #firsttvifs<- vif(fit.model)
 #print(firsttvifs)
