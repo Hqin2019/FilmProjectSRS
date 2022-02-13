@@ -138,10 +138,22 @@ print(all_vifs) #maximum VIF is Gross 2.152045
 #check interactions
 add1.test<- add1(rating.model, scope = .~. + .^2, test = "F")
 add1.test[order(add1.test$`Pr(>F)`),]   #runtime/rating count and gross/runtime interact w/ each other
-newmodel<- lm(Rating ~ Budget + Gross + Runtime + Rating.Count + Runtime*Rating.Count, data = CleanData.norm)
-summary(newmodel)
-gvlma(newmodel)
-
+#add Runtime*Rating.Count
+newmodel1<- lm(Rating ~ Budget + Gross + Runtime + Rating.Count + Runtime*Rating.Count, data = CleanData.norm)
+summary(newmodel1)
+extractAIC(newmodel1)
+#[1]     6.000 -2133.336, a little better
+bptest(newmodel1) #p-value 0.004565, fail the test.
+shapiro.test(resid(newmodel1)) #p-value 0.007025, fail the test.
+gvlma(newmodel1)# no improvement.
+#add Gross*Runtime
+newmodel2<- lm(Rating ~ Budget + Gross + Runtime + Rating.Count + Gross*Runtime, data = CleanData.norm)
+summary(newmodel2)
+extractAIC(newmodel2)
+#[1]     6.000 -2122.099
+bptest(newmodel2) #p-value 0.002982, fail the test.
+shapiro.test(resid(newmodel2)) #p-value 0.005629, fail the test.
+gvlma(newmodel2)# no improvement.
 #try to explain how to interpret interactions, Runtime*RatingCount interact with rating
 
 
