@@ -154,6 +154,14 @@ extractAIC(newmodel2)
 bptest(newmodel2) #p-value 0.002982, fail the test.
 shapiro.test(resid(newmodel2)) #p-value 0.005629, fail the test.
 gvlma(newmodel2)# no improvement.
+#add the three-way interaction term.
+newmodel3<- lm(Rating ~ Budget + Gross + Runtime + Rating.Count + Runtime*Rating.Count*Gross, data = CleanData.norm)
+summary(newmodel3)
+extractAIC(newmodel3)
+#[1]     9.000 -2136.71, smallest so far
+bptest(newmodel3) #p-value 0.003908, fail the test.
+shapiro.test(resid(newmodel3)) #p-value 0.01633, fail the test.
+gvlma(newmodel3)# no improvement.
 #try to explain how to interpret interactions, Runtime*RatingCount interact with rating
 
 
