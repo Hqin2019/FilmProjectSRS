@@ -112,6 +112,7 @@ TopFilms_Norm[cooks.distance(fit.model)> (4 / length(cooks.distance(fit.model)))
 cleandata<- TopFilms_Norm[-c(55, 100, 112, 207, 217, 228, 251, 257, 279, 288, 379, 394, 402, 403, 404, 411, 414, 420, 427, 428, 434, 435, 436, 439, 443),]
 #483 obs of 5 variables.
 CleanData.norm<- data.frame(cleandata)
+row.names(CleanData.norm)<- NULL
 rating.model<- lm(Rating ~., data=CleanData.norm)
 summary(rating.model)
 extractAIC(rating.model)
@@ -121,9 +122,29 @@ par(mfrow=c(2,2))
 plot(rating.model)
 dev.off()
 
+CleanData.norm[cooks.distance(rating.model)> (4 / length(cooks.distance(rating.model))), ]
+cleandata2<- CleanData.norm[-c(31, 98, 109, 125, 175, 209, 212, 239, 260, 281, 329, 371, 395, 398, 399, 409, 439, 440, 466),]
+CleanData.norm2<- data.frame(cleandata2)
+#464 obs. of 5 variables.
+row.names(CleanData.norm2)<- NULL
+rating.model2<- lm(Rating ~., data=CleanData.norm2)
+summary(rating.model2)
+extractAIC(rating.model2)
+#[1]     5.000 -2108.358
+#a better AIC
+par(mar=c(1,1,1,1))
+par(mfrow=c(2,2))
+plot(rating.model2)
+dev.off()
+
 bptest(rating.model) #p-value 0.006052 becomes smaller, fail the test.
 shapiro.test(resid(rating.model)) #normality- show plots for improvement, improved p-value: 0.002749, still small though
 gvlma(rating.model)
+
+
+bptest(rating.model2) #p-value 0.007419 becomes smaller, fail the test.
+shapiro.test(resid(rating.model2)) #normality- show plots for improvement, improved p-value: 0.02195, still small though
+gvlma(rating.model2) #no improvement.
 
 
 #check multicollinearity (Variation Inflation Factors)
