@@ -59,6 +59,14 @@ sum(is.na(TopFilms_Norm[ ,5]))
 #head(TopFilms)
 
 summary(TopFilms_Norm)
+#Divide the data into training data and test data with 20-80 principle.
+set.seed(123)
+index<- sample(nrow(TopFilms_Norm), floor(nrow(TopFilms_Norm)*0.8))
+#406 obs for test data and 102 obs for training data
+train<- TopFilms_Norm[index, ]
+row.names(train)<- NULL
+test<- TopFilms_Norm[-index, ]
+row.names(test)<-NULL
 
 #Multiple Linear Regression 
 #Do the other factors (Budget, Gross, Runtime, Rating Count) have a significant effect on the rating?
@@ -66,7 +74,7 @@ summary(TopFilms_Norm)
 #Dependent variable: Rating
 
 #Practice
-fit.model<- lm(Rating ~., data=TopFilms_Norm)
+fit.model<- lm(Rating ~., data=train)
 fit.model
 summary(fit.model)
 #plot the diagnostic plots
@@ -76,7 +84,7 @@ par(mfrow=c(2,2))
 plot(fit.model)
 dev.off()
 extractAIC(fit.model)
-#[1]     5.000 -2079.708
+#[1]     5.000 -1651.305
 
 #Assumptions
 #1. Independence of observations
@@ -104,19 +112,19 @@ plot(Rating~Rating.Count, data=TopFilms_Norm) #roughly linear
 bptest(fit.model) #ok p-value, we want bigger than .05, but this one is ok
 #check normality
 shapiro.test(resid(fit.model))   #normality fails. too small p-value.
-gvlma(fit.model) #all fail
+gvlma(fit.model) 
 
 #Detect high influence points by Cook's distance.
-TopFilms_Norm[cooks.distance(fit.model)> (4 / length(cooks.distance(fit.model))), ]
+train[cooks.distance(fit.model)> (4 / length(cooks.distance(fit.model))), ]
 #new data
-cleandata<- TopFilms_Norm[-c(55, 100, 112, 207, 217, 228, 251, 257, 279, 288, 379, 394, 402, 403, 404, 411, 414, 420, 427, 428, 434, 435, 436, 439, 443),]
-#483 obs of 5 variables.
-CleanData.norm<- data.frame(cleandata)
+cleantrain<- train[-c(32, 47, 55, 101, 133, 147, 149, 164, 167, 192, 222, 248, 258, 271, 296, 297, 336, 377, 382, 390, 395),]
+#385 obs of 5 variables.
+CleanData.norm<- data.frame(cleantrain)
 row.names(CleanData.norm)<- NULL
 rating.model<- lm(Rating ~., data=CleanData.norm)
 summary(rating.model)
 extractAIC(rating.model)
-#[1]     5.000 -2108.358
+#[1]     5.000 -1671.377
 #a better AIC
 par(mfrow=c(2,2))
 plot(rating.model)
@@ -162,7 +170,7 @@ add1.test[order(add1.test$`Pr(>F)`),]   #runtime/rating count and gross/runtime 
 newmodel1<- lm(Rating ~ Budget + Gross + Runtime + Rating.Count + Runtime*Rating.Count, data = CleanData.norm)
 summary(newmodel1)
 extractAIC(newmodel1)
-#[1]     6.000 -2133.336, a little better
+#[1]     6.000 -1694.784, a little better
 bptest(newmodel1) #p-value 0.004565, fail the test.
 shapiro.test(resid(newmodel1)) #p-value 0.007025, fail the test.
 gvlma(newmodel1)# no improvement.
@@ -187,10 +195,11 @@ gvlma(newmodel3)# no improvement.
 #Transformation
 fit<- lm(Rating^2 ~ Budget + Gross + Runtime + Rating.Count + Runtime*Rating.Count, data = CleanData.norm)
 summary(fit)
-bptest(fit) #p-value 0.2313, fail the test.
-shapiro.test(resid(fit)) #p-value 0.02941, fail the test.
-gvlma(fit)
+bptest(fit) #p-value 0.2913, pass the test.
+shapiro.test(resid(fit)) #p-value 0.08414, pass the test.
+gvlma(fit) #all pass
 extractAIC(fit)
+#[1]     6.000 -1658.558
 
 #Remove Outliers
 Q1rating<- quantile(TopFilms_Norm$Rating, .25)
@@ -265,5 +274,9 @@ library(plotrix)
 gslices<- c(76, 26, 63, 94, 16, 56, 28, 22, 4, 9, 10, 26, 31, 34, 8, 5)
 glabel<- c("Action", "Adventure", "Animation", "Comedy", "Crime", "Drama", "Family", "Fantasy", "History", "Horror", "Mystery", "Romance", "Science Fiction", "Thriller", "War", "Western")
 genrepie<-pie3D(gslices, labels = glabel, labelcex = 1, col = c("pink", "yellow", "brown", "white", "black", "grey", "turquoise", "red", "grey90", "purple", "blue", "orange", "green", "navy blue", "grey40", "gold"), explode = 0.1,main = "Top Film Genres", cex.main=1.7)
+
+#Prediction comparisons
+
+
 
 
