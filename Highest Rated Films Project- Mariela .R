@@ -276,7 +276,7 @@ glabel<- c("Action", "Adventure", "Animation", "Comedy", "Crime", "Drama", "Fami
 genrepie<-pie3D(gslices, labels = glabel, labelcex = 1, col = c("pink", "yellow", "brown", "white", "black", "grey", "turquoise", "red", "grey90", "purple", "blue", "orange", "green", "navy blue", "grey40", "gold"), explode = 0.1,main = "Top Film Genres", cex.main=1.7)
 
 #Prediction comparisons
-
+predict(fit, newdata=test)
 
 
 
