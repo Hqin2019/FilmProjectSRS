@@ -1,11 +1,16 @@
-install.packages("readxl")
-install.packages("gvlma")
-install.packages("lmtest")
+#install.packages("readxl")
+#install.packages("gvlma")
+#install.packages("lmtest")
+#install.packages("car")
+#install.packages("tidyverse")
+#install.packages("caret")
 
 library("readxl")
 library("gvlma")
 library("lmtest")
 library(car)
+library(tidyverse)
+library(caret)
 
 #Importing data frame from excel into R 
 Data<- read_excel("Movies_gross_rating.xlsx", col_names = TRUE)
@@ -61,7 +66,7 @@ gvlma(fit.model)#pass "Heteroscedasticity".
 #Detect high influence points by Cook's distance.
 train[cooks.distance(fit.model)> (4 / length(cooks.distance(fit.model))), ]
 #new data
-cleantrain<- train[-c(27, 32, 55, 97, 121, 131, 133, 147, 155, 164, 178, 187, 222, 223, 226, 243, 248, 258, 265, 271, 273, 311, 313, 377, 390, 395),]
+cleantrain<- train[-c(27, 32, 97, 133, 147, 155, 164, 187, 222, 223, 226, 243, 248, 258, 265, 271, 273, 377, 390, 395),]
 #380 obs of 6 variables.
 
 CleanData.norm[cooks.distance(rating.model)> (4 / length(cooks.distance(rating.model))), ]
@@ -86,21 +91,21 @@ row.names(CleanData.norm)<- NULL
 rating.model<- lm(Rating ~., data=CleanData.norm)
 summary(rating.model)
 #Significant: Budget, Gross, Runtime, Rating.Count, GenreAnimation, GenreDrama
-#Adjusted R-squared: 0.5965
+#Adjusted R-squared: 0.6033
 extractAIC(rating.model)
-#[1]    18.00 -1711.49
+#[1]    20.00 -1731.261
 par(mar=c(1,1,1,1))
 par(mfrow=c(2,2))
 plot(rating.model)
 dev.off()
 #check assumptions
-bptest(rating.model) #p-value 0.2939, pass the test.
+bptest(rating.model) #p-value 0.1759, pass the test.
 shapiro.test(resid(rating.model)) #too small p-value, fails.
 gvlma(rating.model)# pass "Kurtosis" and "Heteroscedasticity"
 
 #check multicollinearity (Variation Inflation Factors)
 all_vifs<- vif(rating.model)
-print(all_vifs) #Genre has VIF 3.046650
+print(all_vifs) #Genre has VIF 3.177127
 
 #check interactions
 add1.test<- add1(rating.model, scope = .~. + .^2, test = "F")
@@ -109,18 +114,25 @@ add1.test[order(add1.test$`Pr(>F)`),]   #runtime/rating count and gross/runtime 
 newmodel1<- lm(Rating ~ Budget + Gross + Runtime + Rating.Count + Runtime*Rating.Count + Genre, data = CleanData.norm)
 summary(newmodel1)
 #Significant: Budget, Gross, Rating.Count, GenreAnimation, GenreDrama, Runtime:Rating.Count
-#Adjsuted R-squared: 0.619, better
+#Adjsuted R-squared: 0.6274, better
 extractAIC(newmodel1)
-#[1]    19.00 -1732.38
+#[1]    21.00 -1754.598
 
 par(mar=c(1,1,1,1))
 par(mfrow=c(2,2))
 plot(newmodel1)
 dev.off()
 #check assumptions
-bptest(newmodel1) #p-value 0.3736, pass the test.
+bptest(newmodel1) #p-value 0.3124, pass the test.
 shapiro.test(resid(newmodel1)) #too small p-value, fails.
 gvlma(newmodel1)# pass "Kurtosis" and "Heteroscedasticity"
 
+#Prediction comparisons
+predict(newmodel1, newdata=test)
+predictions <- newmodel1 %>% predict(test)
+# Model performance
+# (a) Prediction error, RMSE
+RMSE(predictions, test$Budget)
+#[1] 0.4265564
 
 
