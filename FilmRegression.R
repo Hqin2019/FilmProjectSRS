@@ -10,11 +10,11 @@ library(car)
 #Importing data frame from excel into R 
 Data<- read_excel("Movies_gross_rating.xlsx", col_names = TRUE)
 #510 obs. of 10 variables
-#Only include the numerical columns
-Film_Data<- data.frame(Data[, c(4, 5, 8, 9, 10)])
-#510 obs. of 5 variables
+Film_Data<- data.frame(Data[, c(4, 5, 7, 8, 9, 10)])
+#510 obs. of 6 variables
 #Response: Rating
-#Predictors: Budget, Gross, Runtime, Rating.Count
+#Predictors: Budget, Gross, Runtime, Rating.Count, Genre
+#Genre: 16 levels
 
 #Remove NA's
 Films_omit<- na.omit(Film_Data)
@@ -25,22 +25,23 @@ sum(is.na(Films_omit))
 normalize <- function(x) {
   return ((x - min(x, na.rm=T)) / (max(x, na.rm = T) - min(x, na.rm=T)))
 }
-film_norm<- apply(Films_omit, 2, normalize)
+film_norm<- data.frame(apply(Films_omit[, -3], 2, normalize), Genre=factor(Films_omit[, 3]))
 
 #Divide the data into training data and test data with 20-80 principle.
 set.seed(123)
-index<- sample(nrow(Films_omit), floor(nrow(Films_omit)*0.8))
+index<- sample(nrow(film_norm), floor(nrow(film_norm)*0.8))
 #406 obs for test data and 102 obs for training data
-train<- TopFilms_Norm[index, ]
+train<- film_norm[index, ]
 row.names(train)<- NULL
-test<- TopFilms_Norm[-index, ]
+test<- film_norm[-index, ]
 row.names(test)<-NULL
 
 #First (full) model
 fit.model<- lm(Rating ~., data=train)
 summary(fit.model)
-#significant: Budget, Gross, Runtime, Rating.Count
-#Adjusted R-squared: 0.4815
+#significant at 0.05 level: Budget, Gross, Runtime, Rating.Count, GenreAnimation,
+#GenreFamily, GenreRomance
+#Adjusted R-squared: 0.5692
 #plot the diagnostic plots
 par(mar=c(1,1,1,1))
 #the above line can solves the issue of "figure margins too large"
@@ -48,7 +49,7 @@ par(mfrow=c(2,2))
 plot(fit.model)
 dev.off()
 extractAIC(fit.model)
-#[1]     5.000 -1651.305
+#[1]    20.000 -1711.969
 
 #check constant variance
 bptest(fit.model) #p-value = 0.02217, less than 0.05 but bigger than 0.01
