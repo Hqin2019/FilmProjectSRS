@@ -4,6 +4,9 @@
 #install.packages("car")
 #install.packages("tidyverse")
 #install.packages("caret")
+#install.packages("jtools")
+#install.packages("interactions")
+
 
 library("readxl")
 library("gvlma")
@@ -11,6 +14,8 @@ library("lmtest")
 library(car)
 library(tidyverse)
 library(caret)
+library(jtools)
+library(interactions)
 
 #Importing data frame from excel into R 
 Data<- read_excel("Movies_gross_rating.xlsx", col_names = TRUE)
@@ -128,6 +133,8 @@ shapiro.test(resid(newmodel1)) #too small p-value, fails.
 gvlma(newmodel1)# pass "Kurtosis" and "Heteroscedasticity"
 
 #Making interaction plot.
+interact_plot(newmodel1, pred = Rating.Count, modx = Runtime)
+
 
 #Prediction comparisons
 predict(newmodel1, newdata=test)
