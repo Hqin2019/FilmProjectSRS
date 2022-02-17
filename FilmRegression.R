@@ -36,5 +36,21 @@ row.names(train)<- NULL
 test<- TopFilms_Norm[-index, ]
 row.names(test)<-NULL
 
+#First (full) model
+fit.model<- lm(Rating ~., data=train)
+summary(fit.model)
+#plot the diagnostic plots
+par(mar=c(1,1,1,1))
+#the above line can solves the issue of "figure margins too large"
+par(mfrow=c(2,2))
+plot(fit.model)
+dev.off()
+extractAIC(fit.model)
+#[1]     5.000 -1651.305
 
-head(film_norm)
+#check constant variance
+bptest(fit.model) #p-value = 0.02217, less than 0.05 but bigger than 0.01
+#check normality
+shapiro.test(resid(fit.model))  #fails, too small p-value.
+#Check all assumption at once.
+gvlma(fit.model)#pass one.
