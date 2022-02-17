@@ -52,46 +52,46 @@ extractAIC(fit.model)
 #[1]    20.000 -1711.969
 
 #check constant variance
-bptest(fit.model) #p-value = 0.02217, less than 0.05 but bigger than 0.01
+bptest(fit.model) #p-value = 0.106, pass.
 #check normality
 shapiro.test(resid(fit.model))  #fails, too small p-value.
 #Check all assumption at once.
-gvlma(fit.model)#pass one.
+gvlma(fit.model)#pass "Heteroscedasticity".
 
 #Detect high influence points by Cook's distance.
 train[cooks.distance(fit.model)> (4 / length(cooks.distance(fit.model))), ]
 #new data
-cleantrain<- train[-c(32, 47, 55, 101, 133, 147, 149, 164, 167, 192, 222, 248, 258, 271, 296, 297, 336, 377, 382, 390, 395),]
-#385 obs of 5 variables.
+cleantrain<- train[-c(27, 32, 55, 97, 121, 131, 133, 147, 155, 164, 178, 187, 222, 223, 226, 243, 248, 258, 265, 271, 273, 311, 313, 377, 390, 395),]
+#380 obs of 6 variables.
 CleanData.norm<- data.frame(cleantrain)
 row.names(CleanData.norm)<- NULL
 rating.model<- lm(Rating ~., data=CleanData.norm)
 summary(rating.model)
-#Significant: Budget, Gross, Runtime, Rating.Count
-#Adjusted R-squared: 0.5058
+#Significant: Budget, Gross, Runtime, Rating.Count, GenreAnimation, GenreDrama
+#Adjusted R-squared: 0.5965
 extractAIC(rating.model)
-#[1]     5.000 -1671.377, better
+#[1]    18.00 -1711.49
 par(mar=c(1,1,1,1))
 par(mfrow=c(2,2))
 plot(rating.model)
 dev.off()
 #check assumptions
-bptest(rating.model) #p-value 0.005668 becomes smaller, fail the test.
-shapiro.test(resid(rating.model)) #normality- show plots for improvement, improved p-value: 0.001524, still small though
-gvlma(rating.model)# pass two
+bptest(rating.model) #p-value 0.2939, pass the test.
+shapiro.test(resid(rating.model)) #too small p-value, fails.
+gvlma(rating.model)# pass "Kurtosis" and "Heteroscedasticity"
 
 #check multicollinearity (Variation Inflation Factors)
 all_vifs<- vif(rating.model)
-print(all_vifs) #maximum VIF is Gross 2.251895, nothing to worry about.
+print(all_vifs) #Genre has VIF 3.046650
 
 #check interactions
 add1.test<- add1(rating.model, scope = .~. + .^2, test = "F")
 add1.test[order(add1.test$`Pr(>F)`),]   #runtime/rating count and gross/runtime interact w/ each other
 #add Runtime*Rating.Count
-newmodel1<- lm(Rating ~ Budget + Gross + Runtime + Rating.Count + Runtime*Rating.Count, data = CleanData.norm)
+newmodel1<- lm(Rating ~ Budget + Gross + Runtime + Rating.Count + Runtime*Rating.Count + Genre, data = CleanData.norm)
 summary(newmodel1)
-#Significant: Budget, Gross, Rating.Count, Runtime:Rating.Count
-#Adjsuted R-squared: 0.5362, better
+#Significant: Budget, Gross, Rating.Count, GenreAnimation, GenreDrama, Runtime:Rating.Count
+#Adjsuted R-squared: 0.619, better
 extractAIC(newmodel1)
-#[1]     6.000 -1694.784, better
+#[1]    19.00 -1732.38
 
