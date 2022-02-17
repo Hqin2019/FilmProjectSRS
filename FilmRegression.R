@@ -21,4 +21,20 @@ Films_omit<- na.omit(Film_Data)
 sum(is.na(Films_omit))
 #[1] 0
 
+#Normalize the data
+normalize <- function(x) {
+  return ((x - min(x, na.rm=T)) / (max(x, na.rm = T) - min(x, na.rm=T)))
+}
+film_norm<- apply(Films_omit, 2, normalize)
 
+#Divide the data into training data and test data with 20-80 principle.
+set.seed(123)
+index<- sample(nrow(Films_omit), floor(nrow(Films_omit)*0.8))
+#406 obs for test data and 102 obs for training data
+train<- TopFilms_Norm[index, ]
+row.names(train)<- NULL
+test<- TopFilms_Norm[-index, ]
+row.names(test)<-NULL
+
+
+head(film_norm)
