@@ -78,3 +78,19 @@ dev.off()
 bptest(rating.model) #p-value 0.005668 becomes smaller, fail the test.
 shapiro.test(resid(rating.model)) #normality- show plots for improvement, improved p-value: 0.001524, still small though
 gvlma(rating.model)# pass two
+
+#check multicollinearity (Variation Inflation Factors)
+all_vifs<- vif(rating.model)
+print(all_vifs) #maximum VIF is Gross 2.251895, nothing to worry about.
+
+#check interactions
+add1.test<- add1(rating.model, scope = .~. + .^2, test = "F")
+add1.test[order(add1.test$`Pr(>F)`),]   #runtime/rating count and gross/runtime interact w/ each other
+#add Runtime*Rating.Count
+newmodel1<- lm(Rating ~ Budget + Gross + Runtime + Rating.Count + Runtime*Rating.Count, data = CleanData.norm)
+summary(newmodel1)
+#Significant: Budget, Gross, Rating.Count, Runtime:Rating.Count
+#Adjsuted R-squared: 0.5362, better
+extractAIC(newmodel1)
+#[1]     6.000 -1694.784, better
+
