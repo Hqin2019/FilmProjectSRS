@@ -16,3 +16,9 @@ Film_Data<- data.frame(Data[, c(4, 5, 8, 9, 10)])
 #Response: Budget
 #Predictors: Gross, Runtime, Rating, Rating.Count
 
+#Remove NA's
+Films_omit<- na.omit(Film_Data)
+sum(is.na(Films_omit))
+#[1] 0
+
+
