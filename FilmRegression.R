@@ -63,6 +63,24 @@ train[cooks.distance(fit.model)> (4 / length(cooks.distance(fit.model))), ]
 #new data
 cleantrain<- train[-c(27, 32, 55, 97, 121, 131, 133, 147, 155, 164, 178, 187, 222, 223, 226, 243, 248, 258, 265, 271, 273, 311, 313, 377, 390, 395),]
 #380 obs of 6 variables.
+
+CleanData.norm[cooks.distance(rating.model)> (4 / length(cooks.distance(rating.model))), ]
+cleandata2<- CleanData.norm[-c(22, 46, 55, 97, 154, 170, 197, 258, 175, 176, 284, 313, 331, 339, 352, 358),]
+CleanData.norm2<- data.frame(cleandata2)
+#364 obs. of 6 variables.
+row.names(CleanData.norm2)<- NULL
+rating.model2<- lm(Rating ~., data=CleanData.norm2)
+summary(rating.model2)
+par(mar=c(1,1,1,1))
+par(mfrow=c(2,2))
+plot(rating.model2)
+dev.off()
+#check assumptions
+bptest(rating.model2) #p-value 0.2939, pass the test.
+shapiro.test(resid(rating.model2)) #too small p-value, fails.
+gvlma(rating.model)# pass "Kurtosis" and "Heteroscedasticity"
+
+
 CleanData.norm<- data.frame(cleantrain)
 row.names(CleanData.norm)<- NULL
 rating.model<- lm(Rating ~., data=CleanData.norm)
@@ -94,4 +112,15 @@ summary(newmodel1)
 #Adjsuted R-squared: 0.619, better
 extractAIC(newmodel1)
 #[1]    19.00 -1732.38
+
+par(mar=c(1,1,1,1))
+par(mfrow=c(2,2))
+plot(newmodel1)
+dev.off()
+#check assumptions
+bptest(newmodel1) #p-value 0.3736, pass the test.
+shapiro.test(resid(newmodel1)) #too small p-value, fails.
+gvlma(newmodel1)# pass "Kurtosis" and "Heteroscedasticity"
+
+
 
