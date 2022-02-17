@@ -127,6 +127,8 @@ bptest(newmodel1) #p-value 0.3124, pass the test.
 shapiro.test(resid(newmodel1)) #too small p-value, fails.
 gvlma(newmodel1)# pass "Kurtosis" and "Heteroscedasticity"
 
+#Making interaction plot.
+
 #Prediction comparisons
 predict(newmodel1, newdata=test)
 predictions <- newmodel1 %>% predict(test)
