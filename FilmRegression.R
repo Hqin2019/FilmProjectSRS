@@ -13,8 +13,8 @@ Data<- read_excel("Movies_gross_rating.xlsx", col_names = TRUE)
 #Only include the numerical columns
 Film_Data<- data.frame(Data[, c(4, 5, 8, 9, 10)])
 #510 obs. of 5 variables
-#Response: Budget
-#Predictors: Gross, Runtime, Rating, Rating.Count
+#Response: Rating
+#Predictors: Budget, Gross, Runtime, Rating.Count
 
 #Remove NA's
 Films_omit<- na.omit(Film_Data)
@@ -39,6 +39,8 @@ row.names(test)<-NULL
 #First (full) model
 fit.model<- lm(Rating ~., data=train)
 summary(fit.model)
+#significant: Budget, Gross, Runtime, Rating.Count
+#Adjusted R-squared: 0.4815
 #plot the diagnostic plots
 par(mar=c(1,1,1,1))
 #the above line can solves the issue of "figure margins too large"
@@ -54,3 +56,25 @@ bptest(fit.model) #p-value = 0.02217, less than 0.05 but bigger than 0.01
 shapiro.test(resid(fit.model))  #fails, too small p-value.
 #Check all assumption at once.
 gvlma(fit.model)#pass one.
+
+#Detect high influence points by Cook's distance.
+train[cooks.distance(fit.model)> (4 / length(cooks.distance(fit.model))), ]
+#new data
+cleantrain<- train[-c(32, 47, 55, 101, 133, 147, 149, 164, 167, 192, 222, 248, 258, 271, 296, 297, 336, 377, 382, 390, 395),]
+#385 obs of 5 variables.
+CleanData.norm<- data.frame(cleantrain)
+row.names(CleanData.norm)<- NULL
+rating.model<- lm(Rating ~., data=CleanData.norm)
+summary(rating.model)
+#Significant: Budget, Gross, Runtime, Rating.Count
+#Adjusted R-squared: 0.5058
+extractAIC(rating.model)
+#[1]     5.000 -1671.377, better
+par(mar=c(1,1,1,1))
+par(mfrow=c(2,2))
+plot(rating.model)
+dev.off()
+#check assumptions
+bptest(rating.model) #p-value 0.005668 becomes smaller, fail the test.
+shapiro.test(resid(rating.model)) #normality- show plots for improvement, improved p-value: 0.001524, still small though
+gvlma(rating.model)# pass two
