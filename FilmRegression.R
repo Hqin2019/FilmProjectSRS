@@ -75,22 +75,6 @@ cleantrain<- train[-c(27, 32, 97, 133, 147, 155, 164, 187, 222, 223, 226, 243, 2
 #380 obs of 6 variables.
 
 CleanData.norm[cooks.distance(rating.model)> (4 / length(cooks.distance(rating.model))), ]
-cleandata2<- CleanData.norm[-c(22, 46, 55, 97, 154, 170, 197, 258, 175, 176, 284, 313, 331, 339, 352, 358),]
-CleanData.norm2<- data.frame(cleandata2)
-#364 obs. of 6 variables.
-row.names(CleanData.norm2)<- NULL
-rating.model2<- lm(Rating ~., data=CleanData.norm2)
-summary(rating.model2)
-par(mar=c(1,1,1,1))
-par(mfrow=c(2,2))
-plot(rating.model2)
-dev.off()
-#check assumptions
-bptest(rating.model2) #p-value 0.2939, pass the test.
-shapiro.test(resid(rating.model2)) #too small p-value, fails.
-gvlma(rating.model)# pass "Kurtosis" and "Heteroscedasticity"
-
-
 CleanData.norm<- data.frame(cleantrain)
 row.names(CleanData.norm)<- NULL
 rating.model<- lm(Rating ~., data=CleanData.norm)
