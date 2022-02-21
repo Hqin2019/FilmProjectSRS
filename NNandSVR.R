@@ -39,10 +39,6 @@ test<- film_norm[-index, ]
 row.names(test)<-NULL
 
 
-# Include the new columns as input variables
-levelnames = paste(names(flags), collapse = " + ")
-neuralnet(paste("output ~ ", levelnames), d)
-
 #Fit the neural network
 #neuralnet() does not accept y~.
 #hidden= c(5, 3) means 5 and 3 neurons for layer 1 and layer 2, respectively.
