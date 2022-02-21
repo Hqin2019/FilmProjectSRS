@@ -48,3 +48,5 @@ f<- as.formula(paste("Rating ~", paste(n[!n %in% "Rating"], collapse = "+")))
 nn<- neuralnet(f, data=train, hidden=c(5, 3), linear.output=TRUE)
 #Blue lines show the bias term added in each step.
 plot(nn)
+
+
