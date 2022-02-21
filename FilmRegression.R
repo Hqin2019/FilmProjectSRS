@@ -123,9 +123,11 @@ interact_plot(newmodel1, pred = Rating.Count, modx = Runtime)
 #Prediction comparisons
 predict(newmodel1, newdata=test)
 predictions <- newmodel1 %>% predict(test)
+pr.results<- predictions*(max(Data$Rating, na.rm=TRUE)- min(Data$Rating, na.rm=TRUE))+min(Data$Rating, na.rm=TRUE)
+test.results <- (test$Rating)*(max(Data$Rating, na.rm=TRUE)- min(Data$Rating, na.rm=TRUE))+min(Data$Rating, na.rm=TRUE)
 # Model performance
 # (a) Prediction error, RMSE
-RMSE(predictions, test$Budget)
-#[1] 0.4265564
+RMSE(pr.results, test.results)
+#[1] 0.515692
 
 
