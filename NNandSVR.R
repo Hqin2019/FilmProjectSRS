@@ -1,6 +1,7 @@
 library(MASS)
 library(neuralnet)
 library(caret)
+library(plyr)
 
 #Importing data frame from excel into R 
 Data<- read_excel("Movies_gross_rating.xlsx", col_names = TRUE)
@@ -49,4 +50,47 @@ nn<- neuralnet(f, data=train, hidden=c(5, 3), linear.output=TRUE)
 #Blue lines show the bias term added in each step.
 plot(nn)
 
+#Predicting medv using the neural network
+#Scale the prediction output back in order to make a meaningful comparison.
+pr.nn<- compute(nn, test[, -4])
+pr.nn_ <- pr.nn$net.result*(max(Data$Rating, na.rm=TRUE)- min(Data$Rating, na.rm=TRUE))+min(Data$Rating, na.rm=TRUE)
+test.r <- (test$Rating)*(max(Data$Rating, na.rm=TRUE)- min(Data$Rating, na.rm=TRUE))+min(Data$Rating, na.rm=TRUE)
+# Model performance
+# (a) Prediction error, RMSE
+RMSE(pr.nn_, test.r)
+#[1] 0.6044809
 
+#Visual plot
+par(mfrow=c(1, 2))
+plot(test.r, pr.nn_, col = 'red', main= 'Real vs predicted NN', pch=18, cex= 0.7)
+abline(0, 1, lwd=2)
+legend('bottomright', legend='NN', pch=18, col ='red', bty='n')
+plot(test.results, pr.results, col = 'blue', main='Real vs predicted lm', pch=18, cex=0.7)
+abline(0, 1, lwd=2)
+legend("bottomright", legend= 'LM', pch=18, col = 'blue', bty='n', cex=.95)
+dev.off()
+#A (fast) cross validation
+#For the NN, we split the data as 90% train and 10% test in a random way for 10 times.
+set.seed(450)
+cv.error<- NULL
+k<- 10
+#initializing a progress bar using the "plyr" package
+pbar<- create_progress_bar('text')
+pbar$init(k)
+for (i in 1:k){
+  index<- sample(1:nrow(film_norm), round(0.9*nrow(film_norm)))
+  train.cv<- film_norm[index, ]
+  test.cv<- film_norm[-index, ]
+  nn<- neuralnet(f, data=train.cv, hidden=c(5, 3), linear.output=TRUE)
+  pr.nn<- compute(nn, test.cv[, -4])
+  pr.nn_<- pr.nn$net.result*(max(Data$Rating, na.rm=TRUE)- min(Data$Rating, na.rm=TRUE))+min(Data$Rating, na.rm=TRUE)
+  test.cv.r<- (test.cv$Rating)*(max(Data$Rating, na.rm=TRUE)- min(Data$Rating, na.rm=TRUE))+min(Data$Rating, na.rm=TRUE)
+  cv.error[i]<- RMSE(pr.nn_, test.cv.r)
+  pbar$ste()
+}
+
+#Calculate the average RMSE and plot the results as a boxplot
+mean(cv.error)
+#[1] 0.5344207
+cv.error
+boxplot(cv.error, xlab='RMSE CV', col='cyan', border = 'blue', names='CV error (MSE)', main = 'CV error (MSE) for NN', horizontal = TRUE)
