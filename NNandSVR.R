@@ -2,6 +2,7 @@ library(MASS)
 library(neuralnet)
 library(caret)
 library(plyr)
+library(e1071)
 
 #Importing data frame from excel into R 
 Data<- read_excel("Movies_gross_rating.xlsx", col_names = TRUE)
@@ -94,3 +95,19 @@ mean(cv.error)
 #[1] 0.5344207
 cv.error
 boxplot(cv.error, xlab='RMSE CV', col='cyan', border = 'blue', names='CV error (MSE)', main = 'CV error (MSE) for NN', horizontal = TRUE)
+
+#Fit the Support Vector Regression
+set.seed(1)
+tune.out=tune(svm,f,data=train,kernel="radial", ranges=list(cost=c(0.001, 0.01, 0.1, 1,5,10,100) ))
+summary(tune.out)
+bestmod<- tune.out$best.model
+summary(bestmod)
+
+#Prediction
+#Use the best model to predict the class label of the test data
+ypred=predict(bestmod ,test) 
+pr.SVR <- ypred*(max(Data$Rating, na.rm=TRUE)- min(Data$Rating, na.rm=TRUE))+min(Data$Rating, na.rm=TRUE)
+# Model performance
+# (a) Prediction error, RMSE
+RMSE(pr.SVR, test.r)
+#[1] 0.5157974
