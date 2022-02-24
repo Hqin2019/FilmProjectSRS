@@ -130,4 +130,3 @@ test.results <- (test$Rating)*(max(Data$Rating, na.rm=TRUE)- min(Data$Rating, na
 RMSE(pr.results, test.results)
 #[1] 0.515692
 
-
